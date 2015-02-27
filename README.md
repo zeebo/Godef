@@ -14,7 +14,7 @@ The plugin assumes `godef` is present at `$GOPATH/bin/godef`. You need install `
 
     go get -v code.google.com/p/rog-go/exp/cmd/godef
 
-NOTE: If you upgrade you golang version(i.e. from 1.4.1 to 1.4.2), you need to rebuild the `godef` to find the correct postion of runtime src:
+NOTE: If you upgrade you go runtime version, for example from 1.4.1 to 1.4.2, you need to rebuild the `godef` to find the correct postion of runtime src:
 
 ```
 cd $GOPATH/src/code.google.com/p/rog-go/exp/cmd/godef
@@ -25,7 +25,7 @@ go install -v
     
 #### Sublime Package Control
 
-If you are using [Sublime Package Control](http://wbond.net/sublime_packages/package_control) you can simply install Sublime Reader by searching for `Godef` in the package listing.
+If you are using [Sublime Package Control](http://wbond.net/sublime_packages/package_control) you can simply install this plugin by searching for `Godef` in the package listing.
 
 #### Manual Install
 
@@ -43,7 +43,7 @@ Linux:
     
 Windows:
 
-Now windows is been supported. Thanks for [@decker502](http://www.baidu.com/)'s work.  Please use the Sublime Package Control to install this plugin.
+Now windows is been supported. Thanks for [@decker502](https://github.com/decker502)'s work.  Please use the Sublime Package Control to install this plugin.
 
 
 ## Settings
