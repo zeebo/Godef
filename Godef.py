@@ -1,23 +1,39 @@
 import sublime, sublime_plugin, subprocess, os, time
 
 class GodefCommand(sublime_plugin.WindowCommand):
+  def get_setting(self, view, name, default=None):
+    view_settings = view.settings().get("godef")
+    if view_settings is not None:
+      cand = view_settings.get(name)
+      if cand is not None:
+        return cand
+
+    global_settings = sublime.load_settings("Godef.sublime-settings")
+    if global_settings is not None:
+      cand = global_settings.get(name)
+      if cand is not None:
+        return cand
+
+    return default
+
   def run(self):
     print("=================[Godef]Begin=================")
-    settings = sublime.load_settings("Godef.sublime-settings")
-    gopath = settings.get("gopath", os.getenv('GOPATH'))
+    view = self.window.active_view()
+
+    gopath = self.get_setting(view, "gopath")
     if gopath is None:
       print("[Godef]ERROR: no GOPATH defined")
       print("=================[Godef] End =================")
       return
-    godefpath = settings.get("godefpath", None)
+
+    godefpath = self.get_setting(view, "godefpath")
     if godefpath is None:
       print("[Godef]ERROR: godef not found!")
       print("=================[Godef] End =================")
       return
-    else:
-      print("[Godef]INFO: using godef:" + godefpath)
 
-    view = self.window.active_view()
+    print("[Godef]INFO: using godef:" + godefpath)
+    print("[Godef]INFO: using gopath:" + gopath)
 
     # row, col = view.rowcol(view.sel()[0].begin())
 
@@ -31,7 +47,7 @@ class GodefCommand(sublime_plugin.WindowCommand):
     string_before.encode("utf-8")
     buffer_before = bytearray(string_before, encoding = "utf8")
     offset = len(buffer_before)
-    print("[Godef]INFO: selcet_begin: " + str(select_begin) + " offset: " + str(offset))
+    print("[Godef]INFO: select_begin: " + str(select_begin) + " offset: " + str(offset))
 
     filename = view.file_name()
 
