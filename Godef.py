@@ -1,5 +1,21 @@
 import sublime, sublime_plugin, subprocess, os, time
 
+def deduce_gopath(file):
+  dir = os.path.dirname(os.path.abspath(file))
+  while True:
+    gopath_f = os.path.join(dir, '.gopath')
+    gopath_d = os.path.join(dir, 'src')
+    if os.path.isfile(gopath_f):
+      return open(gopath_f).read()
+
+    if os.path.isdir(gopath_d) and not os.path.isfile(os.path.join(dir, 'robots.txt')):
+      return dir
+
+    if dir == '/' or dir == "":
+      return os.path.join(os.environ['HOME'], 'go')
+
+    dir = os.path.dirname(dir)
+
 class GodefCommand(sublime_plugin.WindowCommand):
   def get_setting(self, view, name, default=None):
     view_settings = view.settings().get("godef")
@@ -14,6 +30,10 @@ class GodefCommand(sublime_plugin.WindowCommand):
       if cand is not None:
         return cand
 
+    for key in os.environ.keys():
+      if key.lower() == name.lower():
+        return os.environ[key]
+
     return default
 
   def run(self):
@@ -22,15 +42,13 @@ class GodefCommand(sublime_plugin.WindowCommand):
 
     gopath = self.get_setting(view, "gopath")
     if gopath is None:
-      print("[Godef]ERROR: no GOPATH defined")
-      print("=================[Godef] End =================")
-      return
+      gopath = deduce_gopath(view.file_name())
+      if gopath is None:
+        print("[Godef]ERROR: no GOPATH defined")
+        print("=================[Godef] End =================")
+        return
 
-    godefpath = self.get_setting(view, "godefpath")
-    if godefpath is None:
-      print("[Godef]ERROR: godef not found!")
-      print("=================[Godef] End =================")
-      return
+    godefpath = self.get_setting(view, "godefpath", default="godef")
 
     print("[Godef]INFO: using godef:" + godefpath)
     print("[Godef]INFO: using gopath:" + gopath)
